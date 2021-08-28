@@ -4,7 +4,7 @@ from flask_restful import Api
 
 from config import Config
 from extensions import db
-from models.user import User
+from resources.user import UserListResource
 from resources.dog import DogListResource, DogResource, DogPublishResource
 
 
@@ -26,6 +26,7 @@ def register_extensions(app):
 def register_resources(app):
     api = Api(app)
 
+    api.add_resource(UserListResource, '/users')
     api.add_resource(DogListResource, '/dogs')
     api.add_resource(DogResource, '/dogs/<int:dog_id>')
     api.add_resource(DogPublishResource, '/dogs/<int:dog_id>/publish')
