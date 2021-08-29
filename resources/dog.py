@@ -1,45 +1,58 @@
 from flask import request
 from flask_restful import Resource
+from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from http import HTTPStatus
 
-from models.dog import Dog, dog_list
+from models.dog import Dog
 
 
 class DogListResource(Resource):
 
     def get(self):
+
+        dogs = Dog.get_all_published()
+
         data = []
-        for dog in dog_list:
-            if dog.is_publish is True:
-                data.append(dog.data)
+
+        for dog in dogs:
+            data.append(dog.data())
 
         return {'data': data}, HTTPStatus.OK
 
+    @jwt_required
     def post(self):
-        data = request.get_json()
 
-        dog = Dog(name=data['name'],
-                  age=data['age'],
-                  color=data['color'],
-                  cat_friendly=data['cat_friendly'],
-                  small_dog_friendly=data['small_dog_friendly'],
-                  description=data['description'])
+        json_data = request.get_json()
+        current_user = get_jwt_identity()
+        dog = Dog(name=json_data['name'],
+                  age=json_data['age'],
+                  color=json_data['color'],
+                  cat_friendly=json_data['cat_friendly'],
+                  small_dog_friendly=json_data['small_dog_friendly'],
+                  description=json_data['description'],
+                  user_id=current_user)
 
-        dog_list.append(dog)
+        dog.save()
 
-        return dog.data, HTTPStatus.CREATED
+        return dog.data(), HTTPStatus.CREATED
 
 
 class DogResource(Resource):
 
+    @jwt_optional
     def get(self, dog_id):
-        dog = next((dog for dog in dog_list if dog.id ==
-                    dog_id and dog.is_publish == True), None)
+
+        dog = Dog.get_by_id(dog_id=dog_id)
 
         if dog is None:
             return {'message': 'dog is not found'}, HTTPStatus.NOT_FOUND
 
-        return dog.data, HTTPStatus.OK
+        current_user = get_jwt_identity()
+
+        if dog.is_publish == False and dog.user_id != current_user:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        return dog.data(), HTTPStatus.OK
 
     def put(self, dog_id):
         data = request.get_json()
