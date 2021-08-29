@@ -1,18 +1,5 @@
 from extensions import db
 
-dog_list = []
-
-
-def get_last_id():
-    """
-        Function used to find the last ID, while creating a new Dog object
-    """
-    if dog_list:
-        last_dog = dog_list[-1]
-    else:
-        return 1
-    return last_dog.id + 1
-
 
 class Dog(db.Model):
 
@@ -30,3 +17,36 @@ class Dog(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
 
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
+
+    def data(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'age': self.age,
+            'color': self.color,
+            'cat_friendly': self.cat_friendly,
+            'small_dog_friendly': self.small_dog_friendly,
+            'user_id': self.user_id
+        }
+
+    @classmethod
+    def get_all_published(cls):
+        return cls.query.filter_by(is_publish=True).all()
+
+    @classmethod
+    def get_by_id(cls, dog_id):
+        return cls.query.filter_by(id=dog_id).first()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        if self.name == 'Bear':
+            return "GRRRRRRRRRRR"
+        if self.name == 'bear':
+            return "*BITE BITE BITE*"
+        else:
+            db.session.delete(self)
+            db.session.commit()
