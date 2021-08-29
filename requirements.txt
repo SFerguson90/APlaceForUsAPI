@@ -6,3 +6,4 @@ httpie==1.0.2
 passlib==1.7.1
 psycopg2-binary==2.8.3
 Flask-JWT-Extended==3.20.0
+PyJWT==1.7.1
