@@ -4,7 +4,7 @@
 
  https://www.aplaceforusgreyhounds.org
  
-## Program Information
+## Technical Information
 * **Language**: Python 3.7
 * **Framework**: Flask 1.0.3
 * **Database**: PostgreSQL / pgAdmin 4
