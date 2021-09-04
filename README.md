@@ -34,12 +34,15 @@ Select Privileges, switch "Can login?" to "Yes".
 ## API Functionality
 
 * A POST method to the /token endpoint will return an access_token.
+
     {
         "email": "fakeEmail@fakeMail.com",
         "password": "fakePassword"
     }
+    
 
 * A GET method to the /me endpoint using the access_token will return user information. The KEY must be "Authorization", VALUE "Bearer asdfl;kadfa;ldfj".
+
     {
         "id": 1,
         "username": "fakeName",
