@@ -31,6 +31,21 @@ Select General, populate "Name" with "apfugAdmin".
 Select Definition, populate "Password" with "12345".
 Select Privileges, switch "Can login?" to "Yes".
 
+## API Functionality
+
+* A POST method to the /token endpoint will return an access_token.
+    {
+        "email": "fakeEmail@fakeMail.com",
+        "password": "fakePassword"
+    }
+
+* A GET method to the /me endpoint using the access_token will return user information. The KEY must be "Authorization", VALUE "Bearer asdfl;kadfa;ldfj".
+    {
+        "id": 1,
+        "username": "fakeName",
+        "email": "fakeEmail@fakeMail.com"
+    }
+
 ## Technical Information
 * **Language**: Python 3.7
 * **Framework**: Flask 1.0.3
