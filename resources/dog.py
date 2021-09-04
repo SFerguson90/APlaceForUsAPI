@@ -45,7 +45,7 @@ class DogResource(Resource):
         dog = Dog.get_by_id(dog_id=dog_id)
 
         if dog is None:
-            return {'message': 'dog is not found'}, HTTPStatus.NOT_FOUND
+            return {'message': 'Dog is not found'}, HTTPStatus.NOT_FOUND
 
         current_user = get_jwt_identity()
 
@@ -54,23 +54,46 @@ class DogResource(Resource):
 
         return dog.data(), HTTPStatus.OK
 
+    @jwt_required
     def put(self, dog_id):
-        data = request.get_json()
 
-        dog = next((dog for dog in dog_list if dog.id ==
-                    dog_id), None)
+        json_data = request.get_json()
+
+        dog = Dog.get_by_id(dog_id=dog_id)
 
         if dog is None:
-            return {'message': 'dog not found'}, HTTPStatus.NOT_FOUND
+            return {'message': 'Dog not found'}, HTTPStatus.NOT_FOUND
 
-        dog.name = data['name']
-        dog.age = data['age']
-        dog.color = data['color']
-        dog.cat_friendly = data['cat_friendly']
-        dog.small_dog_friendly = data['small_dog_friendly']
-        dog.description = data['description']
+        dog.name = json_data['name']
+        dog.age = json_data['age']
+        dog.color = json_data['color']
+        dog.cat_friendly = json_data['cat_friendly']
+        dog.small_dog_friendly = json_data['small_dog_friendly']
+        dog.description = json_data['description']
+
+        dog.save()
 
         return dog.data, HTTPStatus.OK
+
+    @jwt_required
+    def delete(self, dog_id):
+
+        dog = Dog.get_by_id(dog_id=dog_id)
+
+        if dog is None:
+            return {'message': 'Dog is not found'}, HTTPStatus.NOT_FOUND
+
+        if dog.name.lower() == "bear":
+            return {'message': "Can't delete Bear. He'll bite you."}, HTTPStatus.FORBIDDEN
+
+        current_user = get_jwt_identity()
+
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        dog.delete()
+
+        return {}, HTTPStatus.NO_CONTENT
 
 
 class DogPublishResource(Resource):
