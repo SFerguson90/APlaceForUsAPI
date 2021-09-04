@@ -16,7 +16,7 @@ We then need to activate our new environment:
 
 All libraries required to run the API can be found in requirements.txt.
 
-Change directories and, from the terminal, type:
+Change to the project directory in the terminal and type:
 
     pip install -r requirements.txt
 
