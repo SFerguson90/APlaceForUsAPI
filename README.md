@@ -5,11 +5,22 @@
  https://www.aplaceforusgreyhounds.org
 
 ## First Use
+It may be necessary to create a new environment for the API, because older libraries were used.
+After having installed Python, go to the terminal and type:
+    
+    conda create --name apfug python=3.7
+
+We then need to activate our new environment:
+
+    conda activate apfug
+
 All libraries required to run the API can be found in requirements.txt.
- 
-From the terminal, type:
+
+Change directories and, from the terminal, type:
 
     pip install -r requirements.txt
+
+This will install the framework and other libraries necessary to run the API.
 
 ## Technical Information
 * **Language**: Python 3.7
