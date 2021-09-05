@@ -4,7 +4,10 @@ from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from http import HTTPStatus
 
 from models.dog import Dog
+from schemas.dog import DogSchema
 
+dog_schema = DogSchema()
+dog_list_schema = DogSchema(many=True)
 
 class DogListResource(Resource):
 
@@ -12,29 +15,57 @@ class DogListResource(Resource):
 
         dogs = Dog.get_all_published()
 
-        data = []
-
-        for dog in dogs:
-            data.append(dog.data())
-
-        return {'data': data}, HTTPStatus.OK
+        return dog_list_schema.dump(dogs).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):
 
         json_data = request.get_json()
         current_user = get_jwt_identity()
-        dog = Dog(name=json_data['name'],
-                  age=json_data['age'],
-                  color=json_data['color'],
-                  cat_friendly=json_data['cat_friendly'],
-                  small_dog_friendly=json_data['small_dog_friendly'],
-                  description=json_data['description'],
-                  user_id=current_user)
+        data, errors = dog_schema.load(data=json_data)
+
+        if errors:
+            return {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
+
+        dog = Dog(**data)
+        dog.user_id = current_user
+        dog.save()
+
+        return dog_schema.dump(dog).data, HTTPStatus.CREATED
+
+    @jwt_required
+    def patch(self, dog_id):
+
+        json_data = request.get_json()
+
+        data, errors = dog_schema.load(data=json_data, partial=('name',))
+
+        if errors:
+            return {'message': 'Validation errors','errors':errors}, HTTPStatus.BAD_REQUEST
+
+        dog = Dog.get_by_id(dog_id=dog_id)
+
+        if dog is None:
+            return {'message': 'Dog not found'}, HTTPStatus.NOT_FOUND
+
+        if dog.id == 1:
+            return {'message': "Bear won't change. He'll bite you."}, HTTPStatus.FORBIDDEN
+
+        current_user = get_jwt_identity()
+
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        dog.name = data.get('name') or dog.name
+        dog.age = data.get('age') or dog.age
+        dog.color = data.get('color') or dog.color
+        dog.cat_friendly = data.get('cat_friendly') or dog.cat_friendly
+        dog.small_dog_friendly = data.get('small_dog_friendly') or dog.small_dog_friendly
+        dog.description = data.get('description') or dog.description
 
         dog.save()
 
-        return dog.data(), HTTPStatus.CREATED
+        return dog_schema.dump(dog).data, HTTPStatus.OK
 
 
 class DogResource(Resource):

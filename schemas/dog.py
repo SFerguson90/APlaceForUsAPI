@@ -12,8 +12,8 @@ from schemas.user import UserSchema
 def validate_age(n):
         if n < 1:
             raise ValidationError('Age must be greater than 0')
-        if n >= 15:
-            raise ValidationError("There's no way your greyhound is that old...")
+        if n >= 20:
+            raise ValidationError("There's no way your dog is that old...")
 
 class DogSchema(Schema):
     class Meta:

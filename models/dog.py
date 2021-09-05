@@ -18,18 +18,6 @@ class Dog(db.Model):
 
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
 
-    def data(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'age': self.age,
-            'color': self.color,
-            'cat_friendly': self.cat_friendly,
-            'small_dog_friendly': self.small_dog_friendly,
-            'user_id': self.user_id
-        }
-
     @classmethod
     def get_all_published(cls):
         return cls.query.filter_by(is_publish=True).all()
