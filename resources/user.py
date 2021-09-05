@@ -15,7 +15,6 @@ class UserListResource(Resource):
     def post(self):
         json_data = request.get_json()
 
-        # VALIDATE THE DATA
         data, errors = user_schema.load(data=json_data)
 
         if errors:

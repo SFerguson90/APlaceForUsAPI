@@ -33,40 +33,6 @@ class DogListResource(Resource):
 
         return dog_schema.dump(dog).data, HTTPStatus.CREATED
 
-    @jwt_required
-    def patch(self, dog_id):
-
-        json_data = request.get_json()
-
-        data, errors = dog_schema.load(data=json_data, partial=('name',))
-
-        if errors:
-            return {'message': 'Validation errors','errors':errors}, HTTPStatus.BAD_REQUEST
-
-        dog = Dog.get_by_id(dog_id=dog_id)
-
-        if dog is None:
-            return {'message': 'Dog not found'}, HTTPStatus.NOT_FOUND
-
-        if dog.id == 1:
-            return {'message': "Bear won't change. He'll bite you."}, HTTPStatus.FORBIDDEN
-
-        current_user = get_jwt_identity()
-
-        if current_user != dog.user_id:
-            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
-
-        dog.name = data.get('name') or dog.name
-        dog.age = data.get('age') or dog.age
-        dog.color = data.get('color') or dog.color
-        dog.cat_friendly = data.get('cat_friendly') or dog.cat_friendly
-        dog.small_dog_friendly = data.get('small_dog_friendly') or dog.small_dog_friendly
-        dog.description = data.get('description') or dog.description
-
-        dog.save()
-
-        return dog_schema.dump(dog).data, HTTPStatus.OK
-
 
 class DogResource(Resource):
 
@@ -126,6 +92,41 @@ class DogResource(Resource):
         dog.delete()
 
         return {}, HTTPStatus.NO_CONTENT
+
+    # WON'T PATCH BOOLEAN VALUES. 9/5/2021
+    @jwt_required
+    def patch(self, dog_id):
+
+        json_data = request.get_json()
+
+        data, errors = dog_schema.load(data=json_data, partial=('name',))
+
+        if errors:
+            return {'message': 'Validation errors','errors':errors}, HTTPStatus.BAD_REQUEST
+
+        dog = Dog.get_by_id(dog_id=dog_id)
+
+        if dog is None:
+            return {'message': 'Dog not found'}, HTTPStatus.NOT_FOUND
+
+        if dog.id == 1:
+            return {'message': "Bear won't change. He'll bite you."}, HTTPStatus.FORBIDDEN
+
+        current_user = get_jwt_identity()
+
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        dog.name = data.get('name') or dog.name
+        dog.age = data.get('age') or dog.age
+        dog.color = data.get('color') or dog.color
+        dog.cat_friendly = data.get('cat_friendly') or dog.cat_friendly
+        dog.small_dog_friendly = data.get('small_dog_friendly') or dog.small_dog_friendly
+        dog.description = data.get('description') or dog.description
+
+        dog.save()
+
+        return dog_schema.dump(dog).data, HTTPStatus.OK
 
 
 class DogPublishResource(Resource):
