@@ -43,8 +43,5 @@ class Dog(db.Model):
         db.session.commit()
 
     def delete(self):
-        if self.name.lower() == 'bear':
-            return "*BITE BITE BITE*"
-        else:
-            db.session.delete(self)
-            db.session.commit()
+        db.session.delete(self)
+        db.session.commit()

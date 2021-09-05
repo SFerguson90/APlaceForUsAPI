@@ -73,7 +73,7 @@ class DogResource(Resource):
 
         dog.save()
 
-        return dog.data, HTTPStatus.OK
+        return dog.data(), HTTPStatus.OK
 
     @jwt_required
     def delete(self, dog_id):
@@ -83,7 +83,8 @@ class DogResource(Resource):
         if dog is None:
             return {'message': 'Dog is not found'}, HTTPStatus.NOT_FOUND
 
-        if dog.name.lower() == "bear":
+        # RIP Bear
+        if dog.id == 1:
             return {'message': "Can't delete Bear. He'll bite you."}, HTTPStatus.FORBIDDEN
 
         current_user = get_jwt_identity()
