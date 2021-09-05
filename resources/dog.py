@@ -99,22 +99,36 @@ class DogResource(Resource):
 
 class DogPublishResource(Resource):
 
+    @jwt_required
     def put(self, dog_id):
-        dog = next((dog for dog in dog_list if dog.id == dog_id), None)
+        dog = Dog.get_by_id(dog_id=dog_id)
 
         if dog is None:
             return {'message': 'dog not found'}, HTTPStatus.NOT_FOUND
 
+        current_user = get_jwt_identity()
+
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
         dog.is_publish = True
+        dog.save()
 
         return {}, HTTPStatus.NO_CONTENT
 
+    @jwt_required
     def delete(self, dog_id):
-        dog = next((dog for dog in dog_list if dog.id == dog_id), None)
+        dog = Dog.get_by_id(dog_id=dog_id)
 
         if dog is None:
             return {'message': 'dog not found'}, HTTPStatus.NOT_FOUND
 
-        dog.is_publish = False
+        current_user = get_jwt_identity()
 
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        dog.is_publish = False
+        dog.save()
+        
         return {}, HTTPStatus.NO_CONTENT
