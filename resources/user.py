@@ -46,17 +46,9 @@ class UserResource(Resource):
         current_user = get_jwt_identity()
 
         if current_user == user.id:
-            data = {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-            }
-
+            data = user_schema.dump(user).data
         else:
-            data = {
-                'id': user.id,
-                'username': user.username,
-            }
+            data = user_public_schema.dump(user).data
 
         return data, HTTPStatus.OK
 
@@ -65,13 +57,5 @@ class MeResource(Resource):
 
     @jwt_required
     def get(self):
-
         user = User.get_by_id(id=get_jwt_identity())
-
-        data = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-        }
-
-        return data, HTTPStatus.OK
+        return user_schema.dump(user).data, HTTPStatus.OK
