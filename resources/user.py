@@ -8,7 +8,7 @@ from models.user import User
 from schemas.user import UserSchema
 
 user_schema = UserSchema()
-user_public_schema = UserSchema(exclude=('email', ))
+user_public_schema = UserSchema(exclude=('email','created_at','updated_at' ))
 
 class UserListResource(Resource):
 
