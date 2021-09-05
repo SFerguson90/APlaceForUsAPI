@@ -6,10 +6,10 @@ class Dog(db.Model):
     __tablename__ = 'dog'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(30), nullable=False)
     description = db.Column(db.String(200))
     age = db.Column(db.Integer, default=1)
-    color = db.Column(db.String(50))
+    color = db.Column(db.String(30))
     cat_friendly = db.Column(db.Boolean(), default=False)
     small_dog_friendly = db.Column(db.Boolean(), default=False)
     is_publish = db.Column(db.Boolean(), default=False)
