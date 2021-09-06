@@ -3,12 +3,40 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
 from http import HTTPStatus
 
-from utils import hash_password
+from webargs import fields
+from webargs.flaskparser import use_kwargs
+
 from models.user import User
+from models.dog import Dog
+
+from schemas.dog import DogSchema
 from schemas.user import UserSchema
 
 user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email','created_at','updated_at' ))
+dog_list_schema = DogSchema(many=True)
+
+class UserDogListResource(Resource):
+
+    @jwt_optional
+    @use_kwargs({'visibility': fields.Str(missing='public')})
+    def get(self, username, visibility):
+
+        user = User.get_by_username(username=username)
+
+        if user is None:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
+        current_user = get_jwt_identity()
+
+        if current_user == user.id and visibility in ['all', 'private']:
+            pass
+        else:
+            visibility = 'public'
+
+        dogs = Dog.get_all_by_user(user_id=user.id, visibility=visibility)
+
+        return dog_list_schema.dump(dogs).data, HTTPStatus.OK
 
 class UserListResource(Resource):
 
