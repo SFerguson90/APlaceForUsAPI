@@ -49,7 +49,7 @@ class DogResource(Resource):
         if dog.is_publish == False and dog.user_id != current_user:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
 
-        return dog.data(), HTTPStatus.OK
+        return dog_schema.dump(dog).data, HTTPStatus.OK
 
     @jwt_required
     def put(self, dog_id):

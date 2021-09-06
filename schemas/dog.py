@@ -19,7 +19,7 @@ class DogSchema(Schema):
     class Meta:
         ordered=True
     
-    author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id','username'])
+    author = fields.Nested(UserSchema, attribute='user', dump_only=True, exclude=('email',))
     id = fields.Integer(dump_only=True)
 
     name = fields.String(required=True, validate=[validate.Length(max=30)])
