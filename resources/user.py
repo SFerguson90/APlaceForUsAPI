@@ -1,13 +1,14 @@
 import os
 
+from extensions import image_set
+
 from flask import request, url_for, render_template
 from flask_restful import Resource
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
 
 from http import HTTPStatus
 
-from webargs import fields
-from webargs.flaskparser import use_kwargs
+from mailgun import MailgunApi
 
 from models.user import User
 from models.dog import Dog
@@ -15,12 +16,14 @@ from models.dog import Dog
 from schemas.dog import DogSchema
 from schemas.user import UserSchema
 
-from mailgun import MailgunApi
+from utils import generate_token, verify_token, save_image
 
-from utils import generate_token, verify_token
+from webargs import fields
+from webargs.flaskparser import use_kwargs
 
 user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email','created_at','updated_at' ))
+user_avatar_schema = UserSchema(only=('avatar_url', ))
 dog_list_schema = DogSchema(many=True)
 
 mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
@@ -134,3 +137,32 @@ class UserActivateResource(Resource):
         user.save()
 
         return {}, HTTPStatus.NO_CONTENT
+
+class UserAvatarUploadResource(Resource):
+
+    @jwt_required
+    def put(self):
+
+        file = request.files.get('avatar')
+
+        if not file:
+            return {'message': 'Not a valid image'}, HTTPStatus.BAD_REQUEST
+
+        if not image_set.file_allowed(file, file.filename):
+            return {'message': 'File type not allowed'}, HTTPStatus.BAD_REQUEST
+
+        user = User.get_by_id(id=get_jwt_identity())
+
+        if user.avatar_image:
+            
+            avatar_path = image_set.path(folder='avatars', filename=user.avatar_image)
+
+            if os.path.exists(avatar_path):
+                os.remove(avatar_path)
+
+        filename = save_image(image=file, folder='avatars')
+
+        user.avatar_image = filename
+        user.save()
+
+        return user_avatar_schema.dump(user).data, HTTPStatus.OK  

@@ -11,7 +11,8 @@ from resources.user import (
     UserResource,
     MeResource,
     UserDogListResource,
-    UserActivateResource)
+    UserActivateResource,
+    UserAvatarUploadResource)
 
 from resources.token import (
     TokenResource,
@@ -40,6 +41,8 @@ def register_extensions(app):
     db.init_app(app)
     migrate = Migrate(app, db)
     jwt.init_app(app)
+    configure_uploads(app, image_set)
+    patch_request_class(app, 10 * 1024 * 1024)
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
@@ -54,6 +57,7 @@ def register_resources(app):
     api.add_resource(UserResource, '/users/<string:username>')
     api.add_resource(UserDogListResource, '/users/<string:username>/dogs')
     api.add_resource(UserActivateResource, '/users/activate/<string:token>')
+    api.add_resource(UserAvatarUploadResource, '/users/avatar')
     api.add_resource(MeResource, '/me')
 
     api.add_resource(TokenResource, '/token')
