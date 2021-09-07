@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
+from flask_uploads import configure_uploads, patch_request_class
 
 from config import Config
-from extensions import db, jwt
+from extensions import db, jwt, image_set
 
 from resources.user import (
     UserListResource,
