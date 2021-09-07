@@ -1,6 +1,9 @@
-from flask import request
+import os
+
+from flask import request, url_for, render_template
 from flask_restful import Resource
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
+
 from http import HTTPStatus
 
 from webargs import fields
@@ -12,9 +15,16 @@ from models.dog import Dog
 from schemas.dog import DogSchema
 from schemas.user import UserSchema
 
+from mailgun import MailgunApi
+
+from utils import generate_token, verify_token
+
 user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email','created_at','updated_at' ))
 dog_list_schema = DogSchema(many=True)
+
+mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
+                    api_key=os.environ.get('MAILGUN_API_KEY'))
 
 class UserDogListResource(Resource):
 
@@ -57,6 +67,21 @@ class UserListResource(Resource):
         user = User(**data)
         user.save()
 
+        token = generate_token(user.email, salt='activate')
+        subject = 'Please confirm your registration'
+        link = url_for(
+            'useractivateresource',
+            token=token,
+            _external=True)
+        text = "Hey! Thanks for using APlaceForUs! Please confirm your registration by clicking on the link: {}".format(link)
+        
+        mailgun.send_email(
+            to=user.email,
+            subject=subject,
+            text=text,
+            html=render_template('email/confirmation.html', link=link)
+            )
+
         return user_schema.dump(user).data, HTTPStatus.CREATED
 
 
@@ -86,3 +111,26 @@ class MeResource(Resource):
     def get(self):
         user = User.get_by_id(id=get_jwt_identity())
         return user_schema.dump(user).data, HTTPStatus.OK
+
+class UserActivateResource(Resource):
+    
+    def get(self, token):
+
+        email = verify_token(token, salt='activate')
+
+        if email is False:
+            return {'message': 'Invalid token or token expired.'}, HTTPStatus.BAD_REQUEST
+
+        user = User.get_by_email(email=email)
+
+        if not user:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
+        if user.is_active is True:
+            return {'message': 'The user account is already activated'}, HTTPStatus.BAD_REQUEST
+
+        user.is_active = True
+
+        user.save()
+
+        return {}, HTTPStatus.NO_CONTENT
