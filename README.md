@@ -1,4 +1,4 @@
-# APlaceForUs Dog Flask API
+# APlaceForUs API
 
 ## First Use
 It may be necessary to create a new environment for the API, because older libraries were used.
