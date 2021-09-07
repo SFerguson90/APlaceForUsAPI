@@ -15,7 +15,7 @@ class MailgunApi:
             to= [to, ]
 
         data = {
-            'from': 'APlaceForUsGreyhounds <no-reply@{}>'.format(self.domain),
+            'from': 'APlaceForUs <no-reply@{}>'.format(self.domain),
             'to': to,
             'subject': subject,
             'text': text,

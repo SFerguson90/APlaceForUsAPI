@@ -1,8 +1,4 @@
-# APlaceForUsGreyhounds API
-
- This is an API for the greyhound rescue organization "A Place For Us Greyhounds."
-
- https://www.aplaceforusgreyhounds.org
+# APlaceForUs Dog Flask API
 
 ## First Use
 It may be necessary to create a new environment for the API, because older libraries were used.
