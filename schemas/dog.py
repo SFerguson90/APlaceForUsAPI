@@ -9,6 +9,7 @@ from marshmallow import (
     ValidationError
 )
 from schemas.user import UserSchema
+from schemas.pagination import PaginationSchema
 
 def validate_age(n):
         if n < 1:
@@ -35,14 +36,19 @@ class DogSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 
-    @post_dump(pass_many=True)
-    def wrap(self, data, many, **kwargs):
-        if many:
-            return {'date':data}
-        return data
+    # NOT NEEDED, BECAUSE PAGINATION FUNCTION / SCHEMA
+
+    # @post_dump(pass_many=True)
+    # def wrap(self, data, many, **kwargs):
+    #     if many:
+    #         return {'date':data}
+    #     return data
 
     def dump_cover_url(self, dog):
         if dog.cover_image:
             return url_for('static', filename='images/dogs/{}'.format(dog.cover_image), _external=True)
         else:
             return url_for('static', filename='images/assets/default-dog-cover.jpg', _external=True)
+
+class DogPaginationSchema(PaginationSchema):
+    data = fields.Nested(DogSchema, attribute='items', many=True)

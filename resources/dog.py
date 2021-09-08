@@ -1,13 +1,18 @@
 import os
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
+from flask_jwt_extended import (get_jwt_identity, jwt_required, jwt_optional)
 from http import HTTPStatus
 from extensions import image_set
 from utils import save_image
-from models.dog import Dog
-from schemas.dog import DogSchema
 
+from models.dog import Dog
+from schemas.dog import DogSchema, DogPaginationSchema
+
+from webargs import fields
+from webargs.flaskparser import use_kwargs
+
+dog_pagination_schema = DogPaginationSchema()
 dog_cover_schema = DogSchema(only=('cover_url', ))
 dog_schema = DogSchema()
 dog_list_schema = DogSchema(many=True)
@@ -51,11 +56,13 @@ class DogCoverUploadResource(Resource):
 
 class DogListResource(Resource):
 
-    def get(self):
+    @use_kwargs({'page': fields.Int(missing=1),
+                'per_page': fields.Int(missing=20)})
+    def get(self, page, per_page):
+        
+        paginated_dogs = Dog.get_all_published(page, per_page)
 
-        dogs = Dog.get_all_published()
-
-        return dog_list_schema.dump(dogs).data, HTTPStatus.OK
+        return dog_pagination_schema.dump(paginated_dogs).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):
