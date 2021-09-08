@@ -56,11 +56,22 @@ class DogCoverUploadResource(Resource):
 
 class DogListResource(Resource):
 
-    @use_kwargs({'page': fields.Int(missing=1),
-                'per_page': fields.Int(missing=20)})
-    def get(self, page, per_page):
+    @use_kwargs({
+        'q': fields.Str(missing=''),
+        'page': fields.Int(missing=1),
+        'per_page': fields.Int(missing=20),
+        'sort': fields.Str(missing='created_at'),
+        'order': fields.Str(missing='desc')
+        })
+    def get(self, q, page, per_page, sort, order):
         
-        paginated_dogs = Dog.get_all_published(page, per_page)
+        if sort not in ['created_at', 'age', 'updated_at']:
+            sort = 'created_at'
+        
+        if order not in ['asc','desc']:
+            order = 'desc'
+
+        paginated_dogs = Dog.get_all_published(q, page, per_page, sort, order)
 
         return dog_pagination_schema.dump(paginated_dogs).data, HTTPStatus.OK
 
