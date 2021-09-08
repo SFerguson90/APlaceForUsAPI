@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
-from flask_uploads import configure_uploads, patch_request_class
+from flask_uploads import configure_uploads
 
 from config import Config
 from extensions import db, jwt, image_set
@@ -42,7 +42,6 @@ def register_extensions(app):
     migrate = Migrate(app, db)
     jwt.init_app(app)
     configure_uploads(app, image_set)
-    patch_request_class(app, 10 * 1024 * 1024)
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
