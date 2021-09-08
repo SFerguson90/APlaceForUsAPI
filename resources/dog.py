@@ -1,13 +1,53 @@
+import os
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from http import HTTPStatus
-
+from extensions import image_set
+from utils import save_image
 from models.dog import Dog
 from schemas.dog import DogSchema
 
+dog_cover_schema = DogSchema(only=('cover_url', ))
 dog_schema = DogSchema()
 dog_list_schema = DogSchema(many=True)
+
+class DogCoverUploadResource(Resource):
+
+    @jwt_required
+    def put(self, dog_id):
+
+        file = request.files.get('cover')
+
+        # EXISTS?
+        if not file:
+            return {'message': 'Not a valid image'}, HTTPStatus.BAD_REQUEST
+        # FILE EXTENSION PERMITTED?
+        if not image_set.file_allowed(file, file.filename):
+            return {'message': 'File type not allowed'}, HTTPStatus.BAD_REQUEST
+
+        dog = Dog.get_by_id(dog_id=dog_id)
+
+        if dog is None:
+            return {'message': 'Dog not found'}, HTTPStatus.NOT_FOUND
+
+        current_user = get_jwt_identity()
+
+        if current_user != dog.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+
+        if dog.cover_image:
+            cover_path = image_set.path(folder='dogs', filename=dog.cover_image)
+            if os.path.exists(cover_path):
+                os.remove(cover_path)
+
+        filename = save_image(image=file, folder='dogs')
+
+        dog.cover_image = filename
+        dog.save()
+
+        return dog_cover_schema.dump(dog).data, HTTPStatus.OK
+            
 
 class DogListResource(Resource):
 

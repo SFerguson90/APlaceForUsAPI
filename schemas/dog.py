@@ -1,3 +1,4 @@
+from flask import url_for
 from typing import AsyncGenerator
 from marshmallow import (
     Schema,
@@ -26,6 +27,7 @@ class DogSchema(Schema):
     age = fields.Integer(validate=validate_age)
     color = fields.String(validate=[validate.Length(max=30)])
     cat_friendly = fields.Boolean()
+    cover_url = fields.Method(serialize='dump_cover_url')
     small_dog_friendly = fields.Boolean()
     description = fields.String(validate=[validate.Length(max=200)])
 
@@ -38,3 +40,9 @@ class DogSchema(Schema):
         if many:
             return {'date':data}
         return data
+
+    def dump_cover_url(self, dog):
+        if dog.cover_image:
+            return url_for('static', filename='images/dogs/{}'.format(dog.cover_image), _external=True)
+        else:
+            return url_for('static', filename='images/assets/default-dog-cover.jpg', _external=True)

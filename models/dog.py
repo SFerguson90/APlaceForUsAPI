@@ -12,6 +12,7 @@ class Dog(db.Model):
     color = db.Column(db.String(30))
     cat_friendly = db.Column(db.Boolean(), default=False)
     small_dog_friendly = db.Column(db.Boolean(), default=False)
+    cover_image = db.Column(db.String(100), default=None)
     is_publish = db.Column(db.Boolean(), default=False)
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())

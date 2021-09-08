@@ -23,7 +23,8 @@ from resources.token import (
 from resources.dog import (
     DogListResource,
     DogResource,
-    DogPublishResource)
+    DogPublishResource,
+    DogCoverUploadResource)
 
 
 def create_app():
@@ -66,6 +67,7 @@ def register_resources(app):
     api.add_resource(DogListResource, '/dogs')
     api.add_resource(DogResource, '/dogs/<int:dog_id>')
     api.add_resource(DogPublishResource, '/dogs/<int:dog_id>/publish')
+    api.add_resource(DogCoverUploadResource, '/dogs/<int:dog_id>/cover')
 
 
 if __name__ == '__main__':
