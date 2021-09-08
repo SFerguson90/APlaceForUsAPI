@@ -1,12 +1,13 @@
 import os
-
-from extensions import image_set
+from http import HTTPStatus
+from sqlalchemy.util.langhelpers import decorator
 
 from flask import request, url_for, render_template
 from flask_restful import Resource
-from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
-
-from http import HTTPStatus
+from flask_jwt_extended import (
+    jwt_optional,
+    get_jwt_identity,
+    jwt_required)
 
 from mailgun import MailgunApi
 
@@ -16,7 +17,12 @@ from models.dog import Dog
 from schemas.dog import DogSchema, DogPaginationSchema
 from schemas.user import UserSchema
 
-from utils import generate_token, verify_token, save_image
+from extensions import image_set, limiter
+from utils import (
+    generate_token,
+    verify_token,
+    save_image,
+    clear_cache)
 
 from webargs import fields
 from webargs.flaskparser import use_kwargs
@@ -31,7 +37,9 @@ mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
                     api_key=os.environ.get('MAILGUN_API_KEY'))
 
 class UserDogListResource(Resource):
-
+    decorators = [limiter.limit('3/minute;30/hour;300/day',
+    methods=['GET'], error_message='Too many Requests')]
+    
     @jwt_optional
     @use_kwargs({
         'page': fields.Int(missing=1),
@@ -168,5 +176,7 @@ class UserAvatarUploadResource(Resource):
 
         user.avatar_image = filename
         user.save()
+
+        clear_cache('/dogs')
 
         return user_avatar_schema.dump(user).data, HTTPStatus.OK  

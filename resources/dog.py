@@ -3,8 +3,8 @@ from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import (get_jwt_identity, jwt_required, jwt_optional)
 from http import HTTPStatus
-from extensions import image_set
-from utils import save_image
+from extensions import image_set, cache
+from utils import save_image, clear_cache
 
 from models.dog import Dog
 from schemas.dog import DogSchema, DogPaginationSchema
@@ -51,6 +51,8 @@ class DogCoverUploadResource(Resource):
         dog.cover_image = filename
         dog.save()
 
+        clear_cache('/dogs')
+
         return dog_cover_schema.dump(dog).data, HTTPStatus.OK
             
 
@@ -63,6 +65,7 @@ class DogListResource(Resource):
         'sort': fields.Str(missing='created_at'),
         'order': fields.Str(missing='desc')
         })
+    @cache.cached(timeout=60, query_string=True)
     def get(self, q, page, per_page, sort, order):
         
         if sort not in ['created_at', 'age', 'updated_at']:
@@ -148,7 +151,7 @@ class DogResource(Resource):
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
 
         dog.delete()
-
+        clear_cache('/dogs')
         return {}, HTTPStatus.NO_CONTENT
 
     # WON'T PATCH BOOLEAN VALUES. 9/5/2021
@@ -184,7 +187,7 @@ class DogResource(Resource):
         dog.description = data.get('description') or dog.description
 
         dog.save()
-
+        clear_cache('/dogs')
         return dog_schema.dump(dog).data, HTTPStatus.OK
 
 
@@ -205,6 +208,8 @@ class DogPublishResource(Resource):
         dog.is_publish = True
         dog.save()
 
+        clear_cache('/dogs')
+
         return {}, HTTPStatus.NO_CONTENT
 
     @jwt_required
@@ -222,4 +227,6 @@ class DogPublishResource(Resource):
         dog.is_publish = False
         dog.save()
         
+        clear_cache('/dogs')
+
         return {}, HTTPStatus.NO_CONTENT

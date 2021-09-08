@@ -4,7 +4,11 @@ from flask_restful import Api
 from flask_uploads import configure_uploads
 
 from config import Config
-from extensions import db, jwt, image_set
+from extensions import (
+    db,
+    jwt,
+    image_set,
+    cache)
 
 from resources.user import (
     UserListResource,
@@ -43,6 +47,7 @@ def register_extensions(app):
     migrate = Migrate(app, db)
     jwt.init_app(app)
     configure_uploads(app, image_set)
+    cache.init_app(app)
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
