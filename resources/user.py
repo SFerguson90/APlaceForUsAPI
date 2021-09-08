@@ -13,7 +13,7 @@ from mailgun import MailgunApi
 from models.user import User
 from models.dog import Dog
 
-from schemas.dog import DogSchema
+from schemas.dog import DogSchema, DogPaginationSchema
 from schemas.user import UserSchema
 
 from utils import generate_token, verify_token, save_image
@@ -25,6 +25,7 @@ user_schema = UserSchema()
 user_public_schema = UserSchema(exclude=('email','created_at','updated_at' ))
 user_avatar_schema = UserSchema(only=('avatar_url', ))
 dog_list_schema = DogSchema(many=True)
+dog_pagination_schema = DogPaginationSchema()
 
 mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
                     api_key=os.environ.get('MAILGUN_API_KEY'))
@@ -32,8 +33,11 @@ mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
 class UserDogListResource(Resource):
 
     @jwt_optional
-    @use_kwargs({'visibility': fields.Str(missing='public')})
-    def get(self, username, visibility):
+    @use_kwargs({
+        'page': fields.Int(missing=1),
+        'per_page': fields.Int(missing=10),
+        'visibility': fields.Str(missing='public')})
+    def get(self, username, page, per_page, visibility):
 
         user = User.get_by_username(username=username)
 
@@ -47,9 +51,9 @@ class UserDogListResource(Resource):
         else:
             visibility = 'public'
 
-        dogs = Dog.get_all_by_user(user_id=user.id, visibility=visibility)
+        paginated_dogs = Dog.get_all_by_user(user_id=user.id, page=page, per_page=per_page, visibility=visibility)
 
-        return dog_list_schema.dump(dogs).data, HTTPStatus.OK
+        return dog_pagination_schema.dump(paginated_dogs).data, HTTPStatus.OK
 
 class UserListResource(Resource):
 
