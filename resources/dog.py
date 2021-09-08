@@ -178,6 +178,7 @@ class DogResource(Resource):
         dog.name = data.get('name') or dog.name
         dog.age = data.get('age') or dog.age
         dog.color = data.get('color') or dog.color
+        dog.location = data.get('location') or dog.location
         dog.cat_friendly = data.get('cat_friendly') or dog.cat_friendly
         dog.small_dog_friendly = data.get('small_dog_friendly') or dog.small_dog_friendly
         dog.description = data.get('description') or dog.description

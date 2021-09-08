@@ -27,6 +27,7 @@ class DogSchema(Schema):
     name = fields.String(required=True, validate=[validate.Length(max=30)])
     age = fields.Integer(validate=validate_age)
     color = fields.String(validate=[validate.Length(max=30)])
+    location = fields.String(validate=[validate.Length(max=40)])
     cat_friendly = fields.Boolean()
     cover_url = fields.Method(serialize='dump_cover_url')
     small_dog_friendly = fields.Boolean()

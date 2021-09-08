@@ -10,6 +10,7 @@ class Dog(db.Model):
     description = db.Column(db.String(200))
     age = db.Column(db.Integer, default=1)
     color = db.Column(db.String(30))
+    location = db.Column(db.String(40), default="Lubbock, TX")
     cat_friendly = db.Column(db.Boolean(), default=False)
     small_dog_friendly = db.Column(db.Boolean(), default=False)
     cover_image = db.Column(db.String(100), default=None)
@@ -31,7 +32,8 @@ class Dog(db.Model):
 
 
         return cls.query.filter(or_(cls.name.ilike(keyword),
-                cls.description.ilike(keyword)),
+                cls.description.ilike(keyword),
+                cls.location.ilike(keyword)),
                 cls.is_publish.is_(True)).order_by(sort_logic).paginate(page=page, per_page=per_page)
 
     @classmethod
