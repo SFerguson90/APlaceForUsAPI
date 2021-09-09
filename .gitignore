@@ -1,3 +1,8 @@
+static/images/avatars/*
+static/images/dogs/*
+.idea/
+venv/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
