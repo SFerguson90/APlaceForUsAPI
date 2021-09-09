@@ -18,15 +18,6 @@ Change to the project directory in the terminal and type:
 
 This will install the framework and other libraries necessary to run the API.
 
-## Database Information
-PostgreSQL & pgAdmin 4 are recommended for establishing the API database. These are instructions for setting up said database. In the instructions, a password for the admin is established. It's recommended that you choose a stronger password and update the config.py file accordingly. The username may also need to be updated, should you choose something else.
-
-After opening the GUI and logging in, the user will need to select "Login/Group Roles" on the left side.
-Left-Click on the tab, and select Create > Login/Group Role...
-Select General, populate "Name" with "apfugAdmin".
-Select Definition, populate "Password" with "12345".
-Select Privileges, switch "Can login?" to "Yes".
-
 ## API Functionality
 
 * A POST method to the /token endpoint will return an access_token.
