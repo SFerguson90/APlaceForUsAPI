@@ -17,9 +17,11 @@ class Config:
     CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 10*60
 
-    uri = os.getenv("DATABASE_URL")
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
+    database_path = os.environ['DATABASE_URL']
+    if database_path.startswith('postgres://'):
+        database_path = database_path.replace('postgres://', 'postgresql://', 1)
+
+    SQLALCHEMY_DATABASE_URI = database_path
 
 class DevelopmentConfig(Config):
 
@@ -30,7 +32,17 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    database_path = os.environ['DATABASE_URL']
+    if database_path.startswith('postgres://'):
+        database_path = database_path.replace('postgres://', 'postgresql://', 1)
+        
+    SQLALCHEMY_DATABASE_URI = database_path
 
 class StagingConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    database_path = os.environ['DATABASE_URL']
+    if database_path.startswith('postgres://'):
+        database_path = database_path.replace('postgres://', 'postgresql://', 1)
+        
+    SQLALCHEMY_DATABASE_URI = database_path

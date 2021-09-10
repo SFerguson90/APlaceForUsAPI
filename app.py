@@ -51,10 +51,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(config_str)
 
-    uri = os.getenv("DATABASE_URL")
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
-
     register_extensions(app)
     register_resources(app)
 
