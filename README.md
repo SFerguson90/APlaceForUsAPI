@@ -1,41 +1,17 @@
 # APlaceForUs API
 
-## First Use
-It may be necessary to create a new environment for the API, because older libraries were used.
-After having installed Python, go to the terminal and type:
-    
-    conda create --name apfug python=3.7
+## First Use - Creating an Account!
 
-We then need to activate our new environment:
+![LoginSuccess](/testPictures/accountLogInSuccess.jpg)
 
-    conda activate apfug
+## Email Verification with Mailgun API!
 
-All libraries required to run the API can be found in requirements.txt.
+![MailGunAPI](/testPictures/accountVerification.jpg)
 
-Change to the project directory in the terminal and type:
+## Post your dog!
 
-    pip install -r requirements.txt
+![DogPostSuccess](/testPictures/dogPostSuccess.jpg)
 
-This will install the framework and other libraries necessary to run the API.
-
-## API Functionality
-
-* A POST method to the /token endpoint will return an access_token.
-
-```
-    {
-        "email": "fakeEmail@fakeMail.com"
-        "password": "fakePassword"
-    }
-```
-* A GET method to the /me endpoint using the access_token will return user information. The KEY must be "Authorization", VALUE "Bearer asdfl;kadfa;ldfj".
-```
-    {
-        "id": 1,
-        "username": "fakeName",
-        "email": "fakeEmail@fakeMail.com"
-    }
-```
 ## Technical Information
 * **Language**: Python 3.7
 * **Framework**: Flask 1.0.3
