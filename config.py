@@ -32,6 +32,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    
     database_path = os.environ['DATABASE_URL']
     if database_path.startswith('postgres://'):
         database_path = database_path.replace('postgres://', 'postgresql://', 1)
@@ -41,6 +42,7 @@ class ProductionConfig(Config):
 class StagingConfig(Config):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
     database_path = os.environ['DATABASE_URL']
     if database_path.startswith('postgres://'):
         database_path = database_path.replace('postgres://', 'postgresql://', 1)
