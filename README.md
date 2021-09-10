@@ -2,23 +2,26 @@
 
 ## First Use - Creating an Account
 
-![LoginSuccess](/testPictures/accountLogInSuccess.jpg)
+
+## Logging in and receiving a JSON Web Token
+
+![LoginSuccess](/testPictures/accountLogInSuccess.jpg "Logging in")
 
 ## Email Verification with Mailgun API
 
-![MailGunAPI](/testPictures/accountVerification.jpg)
+![MailGunAPI](/testPictures/accountVerification.jpg "MailGun API")
 
 ## Post your dog
 
-![DogPostSuccess](/testPictures/dogPostSuccess.jpg)
+![DogPostSuccess](/testPictures/dogPostSuccess.jpg "Uploading Dog Profile")
 
 ## Change your avatar
 
-![AvatarChangePict](/testPictures/avatarPUTsuccess.jpg)
+![AvatarChangePict](/testPictures/avatarPUTsuccess.jpg "Changing User Avatar")
 
 ## Deployed and running on Heroku
 
-![HerokuPict](/testPictures/herokuSuccessPost.jpg)
+![HerokuPict](/testPictures/herokuSuccessPost.jpg "Functionality on Heroku")
 
 ## Technical Information
 * **Language**: Python 3.7
