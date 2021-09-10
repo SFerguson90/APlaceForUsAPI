@@ -1,4 +1,5 @@
 import os
+import re
 
 class Config:
 
@@ -15,6 +16,10 @@ class Config:
 
     CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 10*60
+
+    uri = os.getenv("DATABASE_URL")
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
 
 class DevelopmentConfig(Config):
 

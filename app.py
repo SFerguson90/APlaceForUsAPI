@@ -48,10 +48,6 @@ def create_app():
     else:
         config_str = 'config.DevelopmentConfig'
 
-    uri = os.getenv("DATABASE_URL")  # or other relevant config var
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
-
     app = Flask(__name__)
     app.config.from_object(config_str)
 
