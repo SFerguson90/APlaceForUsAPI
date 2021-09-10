@@ -2,7 +2,7 @@
 
 #### First Use - Creating an Account
 
-To use the API, an account must first be created. This happens through a POST request to the /users endpoint. Users can feel safe, knowing their passwords are SHA256 encrypted, when stored in the database.
+To use the API, an account must first be created. This happens through a POST request to the /users endpoint. Users can feel safe, knowing their passwords are SHA256 encrypted when stored in the database.
 
 ![NewUserCreated](/testPictures/newAccountPost.jpg "New account created")
 
@@ -14,11 +14,11 @@ After having created an account, the user will be sent a verification email to t
 
 #### Logging in and receiving a JSON Web Token
 
-By passing email and password as keys with their respective values to the /tokens endpoint, a user is given a Bearer, with which they can log in.
+By passing email and password as keys with their respective values to the /tokens endpoint, a user is given a Bearer access token, with which they can log in.
 
 ![LoginSuccess](/testPictures/accountLogInSuccess.jpg "Logging in")
 
-#### Post your dog
+#### Post your dog!
 
 Once an account is created and the user has logged in, they may share their dog's information!
 
@@ -32,7 +32,7 @@ Don't like your avatar picture? Let's change it!
 
 #### Deployed and running on Heroku
 
-All of this is available from the Heroku platform!
+All of this is available from the Heroku platform! On the right, you'll notice the default avatar picture, a friendly picture of Bear! Towards the bottom, you'll notice the User table in pgAdmin 4, with the passwords safely encrypted.
 
 ![HerokuPict](/testPictures/herokuSuccessPost.jpg "Functionality on Heroku")
 
